@@ -22,7 +22,7 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
      */
     public function returnZeroForEmptyAmount()
     {
-        $this->assertSame('zero '.self::CURRENCY, $this->converter->convert(0.00, self::CURRENCY));
+        $this->assertSame('Zero złotych', $this->converter->convert(0.00));
     }
 
     /**
@@ -33,7 +33,7 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
      */
     public function returnProperAmountStringForUnits($units, $expectedResult)
     {
-        $this->assertSame($expectedResult.' '.self::CURRENCY, $this->converter->convert($units, self::CURRENCY));
+        $this->assertSame($expectedResult, $this->converter->convert($units));
     }
 
     /**
@@ -42,15 +42,16 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
     public function getUnits()
     {
         return [
-            [1.00, 'Jeden'],
-            [2.00, 'Dwa'],
-            [3.00, 'Trzy'],
-            [4.00, 'Cztery'],
-            [5.00, 'Pięć'],
-            [6.00, 'Sześć'],
-            [7.00, 'Siedem'],
-            [8.00, 'Osiem'],
-            [9.00, 'Dziewięć'],
+            [0.00, 'Zero złotych'],
+            [1.00, 'Jeden złoty'],
+            [2.00, 'Dwa złote'],
+            [3.00, 'Trzy złote'],
+            [4.00, 'Cztery złote'],
+            [5.00, 'Pięć złotych'],
+            [6.00, 'Sześć złotych'],
+            [7.00, 'Siedem złotych'],
+            [8.00, 'Osiem złotych'],
+            [9.00, 'Dziewięć złotych'],
         ];
     }
 }
