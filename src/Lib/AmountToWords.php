@@ -19,6 +19,13 @@ class AmountToWords
     ];
 
     /** @var array */
+    private static $pens = [
+        self::SINGULAR => 'grosz',
+        self::PLURAL => 'grosze',
+        self::MULTIPLE => 'groszy',
+    ];
+
+    /** @var array */
     private static $numberToWord = [
         1 => 'jeden',
         2 => 'dwa',
@@ -109,20 +116,18 @@ class AmountToWords
     public function convert(float $amount): string
     {
         if (empty($amount)) {
-            return 'Zero złotych';
+            return 'Zero złotych zero groszy';
         }
 
         $amountAsStrings = explode('.', number_format($amount, 2, '.', ''));
 
         $decimals = $amountAsStrings[1];
-        $numberToConvert = $amountAsStrings[0];
+        $number = $amountAsStrings[0];
 
-        $currency = self::$currency[$this->getCurrencyDeclinationCase((int)$numberToConvert)];
+        $currency = self::$currency[$this->getCurrencyDeclinationCase((int)$number)];
+        $pens = self::$pens[$this->getCurrencyDeclinationCase((int)$decimals)];
 
-        return $this->createCompleteWord(
-            implode(' ', $this->getAmountAsWords($numberToConvert)),
-            $currency
-        );
+        return $this->getResultString($number, $currency, $decimals, $pens);
     }
 
     /**
@@ -131,6 +136,10 @@ class AmountToWords
      */
     private function getAmountAsWords($numberToConvert): array
     {
+        if ($numberToConvert == 0) {
+            return ['zero'];
+        }
+
         $numberAsString = number_format((float)$numberToConvert, 0, '.', self::THOUSANDS_SEPARATOR);
         $numberParts = explode(self::THOUSANDS_SEPARATOR, $numberAsString);
         $parts = [];
@@ -160,7 +169,7 @@ class AmountToWords
      */
     private function createCompleteWord($amountInWord, $currency)
     {
-        return ucfirst(trim($amountInWord).' '.trim($currency));
+        return trim($amountInWord).' '.trim($currency);
     }
 
     /**
@@ -184,6 +193,9 @@ class AmountToWords
         $lastTwoDigits = substr((string)$amount, -2);
 
         switch (true) {
+            case $amount == 0:
+                $declinationBase = self::MULTIPLE;
+                break;
             case $this->isPowerOfThousand($amount):
                 $declinationBase = self::MULTIPLE;
                 break;
@@ -264,5 +276,22 @@ class AmountToWords
         }
 
         return $parts;
+    }
+
+    /**
+     * @param $number
+     * @param $currency
+     * @param $decimals
+     * @param $pens
+     * @return string
+     */
+    private function getResultString($number, $currency, $decimals, $pens): string
+    {
+        return ucfirst(
+            $this->createCompleteWord(
+                implode(' ', $this->getAmountAsWords($number)),
+                $currency
+            ).' '.$this->createCompleteWord(implode(' ', $this->getAmountAsWords($decimals)), $pens)
+        );
     }
 }
