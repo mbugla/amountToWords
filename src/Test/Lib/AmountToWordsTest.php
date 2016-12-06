@@ -81,6 +81,38 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedResult, $this->converter->convert($number));
     }
 
+    /**
+     * @test
+     * @dataProvider getHundredsWithTensAndUnits
+     * @param $number
+     * @param $expectedResult
+     */
+    public function returnProperAmountForHundredsWithTensAndUnits($number, $expectedResult)
+    {
+        $this->assertSame($expectedResult, $this->converter->convert($number));
+    }
+
+    /**
+     * @return array
+     */
+    public function getHundredsWithTensAndUnits()
+    {
+        return [
+            [101, "Sto jeden złotych"],
+            [111, "Sto jedenaście złotych"],
+            [222, "Dwieście dwadzieścia dwa złote"],
+            [223, "Dwieście dwadzieścia trzy złote"],
+            [225, "Dwieście dwadzieścia pięć złotych"],
+            [345, "Trzysta czterdzieści pięć złotych"],
+            [456, "Czterysta pięćdziesiąt sześć złotych"],
+            [578, "Pięćset siedemdziesiąt osiem złotych"],
+            [690, "Sześćset dziewięćdziesiąt złotych"],
+            [776, "Siedemset siedemdziesiąt sześć złotych"],
+            [843, "Osiemset czterdzieści trzy złote"],
+            [932, "Dziewięćset trzydzieści dwa złote"],
+        ];
+    }
+
     public function getHundreds()
     {
         return [
@@ -95,8 +127,6 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
             [900, "Dziewięćset złotych"],
         ];
     }
-
-
 
     /**
      * @return array

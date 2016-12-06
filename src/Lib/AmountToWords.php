@@ -71,23 +71,31 @@ class AmountToWords
         $amountAsStrings = explode('.', number_format($amount, 2, '.', ''));
 
         $decimals = $amountAsStrings[1];
-        $integerPart = $amountAsStrings[0];
-        $integerMagnitude = $this->getNumberMagnitude($integerPart);
+        $numberToConvert = $amountAsStrings[0];
+        $integerMagnitude = $this->getNumberMagnitude($numberToConvert);
 
         $parts = [];
-        for ($i = 0; $i < $integerMagnitude + 1; $i++) {
+        $leftToConvert = $numberToConvert;
+        for ($i = 0; $i < ($integerMagnitude + 1); $i++) {
 
-            if($this->isTeenNumber($integerPart)) {
-                $parts[] = self::$tensToWord[$integerPart];
+            if ($this->isTeenNumber($leftToConvert)) {
+                $parts[] = self::$tensToWord[$leftToConvert];
+                $num = $leftToConvert;
                 break;
             }
 
-            if ($this->isRoundTenWithoutUnits($i, $integerPart)) {
-                continue;
+            if ($this->isRoundTenWithoutUnits($leftToConvert)) {
+                $parts[] = self::$tensToWord[$leftToConvert];
+                $num = $leftToConvert;
+
+                break;
             }
 
-            $num = $integerPart[$i].str_repeat('0', ($integerMagnitude - $i));
+            $num = $numberToConvert[$i].str_repeat('0', ($integerMagnitude - $i));
 
+            if ((int)$num == 0) {
+                continue;
+            }
             switch ($this->getNumberMagnitude((int)$num)) {
                 case 0:
                     $dict = self::$unitToWord;
@@ -99,12 +107,14 @@ class AmountToWords
                     $dict = self::$hundredsToWord;
                     break;
             }
+
             $parts[] = $dict[$num];
+            $leftToConvert = $numberToConvert - $num;
         }
 
         $number = implode(' ', $parts);
 
-        $currencyBasis = $this->getDeclinedCurrency((int)$integerPart);
+        $currencyBasis = $this->getDeclinedCurrency((int)$numberToConvert);
 
         return $this->createCompleteWord($number, self::$currency[$currencyBasis]);
     }
@@ -126,6 +136,10 @@ class AmountToWords
     private function getDeclinedCurrency($amount): string
     {
         switch (true) {
+
+            case $amount > 1 && $amount > 20 && in_array(substr((string)$amount, -1), [2, 3, 4]):
+                $currencyBasis = 'plural';
+                break;
             case $amount === 1:
                 $currencyBasis = 'singular';
                 break;
@@ -160,12 +174,11 @@ class AmountToWords
     }
 
     /**
-     * @param $i
-     * @param $integerPart
+     * @param $number
      * @return bool
      */
-    private function isRoundTenWithoutUnits($i, $integerPart): bool
+    private function isRoundTenWithoutUnits($number): bool
     {
-        return ($i > 0) && $integerPart[$i] == 0;
+        return $number % 10 == 0 && $number < 100;
     }
 }
