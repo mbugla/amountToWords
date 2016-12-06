@@ -1,11 +1,14 @@
 {
-    "name": "mbugla/amount-to-words",
-    "description": "Converts amount to words",
+    "name": "hajs86/amount-to-words",
+    "description": "Converts amount in PLN to words",
     "type": "library",
     "autoload": {
         "psr-4": {
             "": "src/"
         }
+    },
+    "require": {
+        "php": ">=7.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.7"

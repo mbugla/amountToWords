@@ -142,6 +142,7 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [101, 'Sto jeden złotych zero groszy'],
+            [156.20, 'Sto pięćdziesiąt sześć złotych dwadzieścia groszy'],
             [1234, 'Jeden tysiąc dwieście trzydzieści cztery złote zero groszy'],
             [1000000, 'Jeden milion złotych zero groszy'],
             [1001000, 'Jeden milion jeden tysiąc złotych zero groszy'],
