@@ -62,16 +62,15 @@ class AmountToWords
         $integerPart = $amountAsStrings[0];
         $integerMagnitude = $this->getNumberMagnitude($integerPart);
 
-
         $parts = [];
         for ($i = 0; $i < $integerMagnitude + 1; $i++) {
 
-            if(($i === 0) && (strlen($integerPart) > 1) && $integerPart[$i] == 1 ) {
+            if($this->isTeenNumber($integerPart)) {
                 $parts[] = self::$tensToWord[$integerPart];
                 break;
             }
 
-            if (($i > 0) && $integerPart[$i] == 0) {
+            if ($this->isRoundTenWithoutUnits($i, $integerPart)) {
                 continue;
             }
 
@@ -134,5 +133,24 @@ class AmountToWords
     private function getNumberMagnitude($integerPart): int
     {
         return strlen((string)$integerPart) - 1;
+    }
+
+    /**
+     * @param $number
+     * @return bool
+     */
+    private function isTeenNumber($number): bool
+    {
+        return $number > 10 && $number < 20;
+    }
+
+    /**
+     * @param $i
+     * @param $integerPart
+     * @return bool
+     */
+    private function isRoundTenWithoutUnits($i, $integerPart): bool
+    {
+        return ($i > 0) && $integerPart[$i] == 0;
     }
 }

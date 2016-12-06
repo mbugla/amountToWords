@@ -71,6 +71,34 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     * @dataProvider getHundreds
+     * @param $number
+     * @param $expectedResult
+     */
+    public function returnProperAmountForHundreds($number, $expectedResult)
+    {
+        $this->assertSame($expectedResult, $this->converter->convert($number));
+    }
+
+    public function getHundreds()
+    {
+        return [
+            [100, "Sto złotych"],
+            [200, "Dwieście złotych"],
+            [300, "Trzysta złotych"],
+            [400, "Czterysta złotych"],
+            [500, "Pięćset złotych"],
+            [600, "Sześćset złotych"],
+            [700, "Siedemset złotych"],
+            [800, "Osiemset złotych"],
+            [900, "Dziewięćset złotych"],
+        ];
+    }
+
+
+
+    /**
      * @return array
      */
     public function getTensWithUnits()
