@@ -48,6 +48,18 @@ class AmountToWords
         90 => 'dziewięćdziesiąt',
     ];
 
+    private static $hundredsToWord = [
+        100 => 'sto',
+        200 => 'dwieście',
+        300 => 'trzysta',
+        400 => 'czterysta',
+        500 => 'pięćset',
+        600 => 'sześćset',
+        700 => 'siedemset',
+        800 => 'osiemset',
+        900 => 'dziewięćset',
+    ];
+
 
     /**
      * @param float $amount
@@ -82,6 +94,9 @@ class AmountToWords
                     break;
                 case 1:
                     $dict = self::$tensToWord;
+                    break;
+                case 2:
+                    $dict = self::$hundredsToWord;
                     break;
             }
             $parts[] = $dict[$num];
