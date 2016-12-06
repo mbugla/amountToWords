@@ -8,8 +8,6 @@ use Lib\AmountToWords;
 
 class AmountToWordsTest extends \PHPUnit_Framework_TestCase
 {
-    const CURRENCY = 'PLN';
-
     /** @var AmountToWords */
     private $converter;
 
