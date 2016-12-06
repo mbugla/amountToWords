@@ -14,7 +14,7 @@ class AmountToWords
     ];
 
     /** @var array  */
-    private static $unitToWord = [
+    private static $unitAndTeensToWord = [
         0 => 'zero',
         1 => 'jeden',
         2 => 'dwa',
@@ -25,7 +25,18 @@ class AmountToWords
         7 => 'siedem',
         8 => 'osiem',
         9 => 'dziewięć',
+        10 => 'dziesięć',
+        11 => 'jedenaście',
+        12 => 'dwanaście',
+        13 => 'trzynaście',
+        14 => 'czternaście',
+        15 => 'piętnaście',
+        16 => 'szesnaście',
+        17 => 'siedemnaście',
+        18 => 'osiemnaście',
+        19 => 'dziewiętnaście',
     ];
+
 
     /**
      * @param float $amount
@@ -34,11 +45,14 @@ class AmountToWords
      */
     public function convert(float $amount): string
     {
-        $units = $amount % 10;
+        $amountAsStrings = explode('.', number_format($amount, 2, '.', ''));
 
-        $currencyBasis = $this->getDeclinedCurrency($units);
+        $decimals = $amountAsStrings[1];
+        $integer = (int)$amountAsStrings[0];
 
-        return ucfirst(implode(' ',[self::$unitToWord[$units],self::$currency[$currencyBasis]]));
+        $currencyBasis = $this->getDeclinedCurrency($integer);
+
+        return ucfirst(implode(' ',[self::$unitAndTeensToWord[$integer],self::$currency[$currencyBasis]]));
     }
 
     /**

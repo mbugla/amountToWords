@@ -17,6 +17,7 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
     {
         $this->converter = new AmountToWords();
     }
+
     /**
      * @test
      */
@@ -34,6 +35,61 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
     public function returnProperAmountStringForUnits($units, $expectedResult)
     {
         $this->assertSame($expectedResult, $this->converter->convert($units));
+    }
+
+    /**
+     * @test
+     * @dataProvider getTeens
+     * @param $number
+     * @param $expectedResult
+     */
+    public function returnProperAmountStringForTeens($number, $expectedResult)
+    {
+        $this->assertSame($expectedResult, $this->converter->convert($number));
+    }
+
+    /**
+     * @test
+     * @dataProvider getTens
+     * @param $number
+     * @param $expectedResult
+     */
+    public function returnProperAmountForTens($number, $expectedResult)
+    {
+        $this->assertSame($expectedResult, $this->converter->convert($number));
+    }
+
+    public function getTens()
+    {
+        return [
+            [20, 'Dwadzieścia złotych'],
+            [30, 'Trzydzieści złotych'],
+            [40, 'Czterdzieści złotych'],
+            [50, 'Pięćdziesiąt złotych'],
+            [60, 'Sześćdziesiąt złotych'],
+            [70, 'Siedemdziesiąt złotych'],
+            [80, 'Osiemdziesiąt złotych'],
+            [90, 'Dziewięćdziesiąt złotych'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getTeens()
+    {
+        return [
+            [10.00, 'Dziesięć złotych'],
+            [11.00, 'Jedenaście złotych'],
+            [12.00, 'Dwanaście złotych'],
+            [13.00, 'Trzynaście złotych'],
+            [14.00, 'Czternaście złotych'],
+            [15.00, 'Piętnaście złotych'],
+            [16.00, 'Szesnaście złotych'],
+            [17.00, 'Siedemnaście złotych'],
+            [18.00, 'Osiemnaście złotych'],
+            [19.00, 'Dziewiętnaście złotych'],
+        ];
     }
 
     /**
