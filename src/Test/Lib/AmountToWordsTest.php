@@ -59,6 +59,37 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedResult, $this->converter->convert($number));
     }
 
+    /**
+     * @test
+     * @dataProvider getTensWithUnits
+     * @param $number
+     * @param $expectedResult
+     */
+    public function returnProperAmountForTensWithUnits($number, $expectedResult)
+    {
+        $this->assertSame($expectedResult, $this->converter->convert($number));
+    }
+
+    /**
+     * @return array
+     */
+    public function getTensWithUnits()
+    {
+        return [
+          [21, 'Dwadzieścia jeden złotych'],
+          [38, 'Trzydzieści osiem złotych'],
+          [45, 'Czterdzieści pięć złotych'],
+          [53, 'Pięćdziesiąt trzy złotych'],
+          [64, 'Sześćdziesiąt cztery złotych'],
+          [72, 'Siedemdziesiąt dwa złotych'],
+          [89, 'Osiemdziesiąt dziewięć złotych'],
+          [96, 'Dziewięćdziesiąt sześć złotych'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public function getTens()
     {
         return [

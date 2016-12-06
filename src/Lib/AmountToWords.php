@@ -6,15 +6,15 @@ namespace Lib;
 
 class AmountToWords
 {
-    /** @var array  */
+    /** @var array */
     private static $currency = [
         'singular' => 'złoty',
         'plural' => 'złote',
         'multiple' => 'złotych',
     ];
 
-    /** @var array  */
-    private static $unitAndTeensToWord = [
+    /** @var array */
+    private static $unitToWord = [
         0 => 'zero',
         1 => 'jeden',
         2 => 'dwa',
@@ -25,6 +25,9 @@ class AmountToWords
         7 => 'siedem',
         8 => 'osiem',
         9 => 'dziewięć',
+    ];
+
+    private static $tensToWord = [
         10 => 'dziesięć',
         11 => 'jedenaście',
         12 => 'dwanaście',
@@ -35,6 +38,14 @@ class AmountToWords
         17 => 'siedemnaście',
         18 => 'osiemnaście',
         19 => 'dziewiętnaście',
+        20 => 'dwadzieścia',
+        30 => 'trzydzieści',
+        40 => 'czterdzieści',
+        50 => 'pięćdziesiąt',
+        60 => 'sześćdziesiąt',
+        70 => 'siedemdziesiąt',
+        80 => 'osiemdziesiąt',
+        90 => 'dziewięćdziesiąt',
     ];
 
 
@@ -48,11 +59,50 @@ class AmountToWords
         $amountAsStrings = explode('.', number_format($amount, 2, '.', ''));
 
         $decimals = $amountAsStrings[1];
-        $integer = (int)$amountAsStrings[0];
+        $integerPart = $amountAsStrings[0];
+        $integerMagnitude = $this->getNumberMagnitude($integerPart);
 
-        $currencyBasis = $this->getDeclinedCurrency($integer);
 
-        return ucfirst(implode(' ',[self::$unitAndTeensToWord[$integer],self::$currency[$currencyBasis]]));
+        $parts = [];
+        for ($i = 0; $i < $integerMagnitude + 1; $i++) {
+
+            if(($i === 0) && (strlen($integerPart) > 1) && $integerPart[$i] == 1 ) {
+                $parts[] = self::$tensToWord[$integerPart];
+                break;
+            }
+
+            if (($i > 0) && $integerPart[$i] == 0) {
+                continue;
+            }
+
+            $num = $integerPart[$i].str_repeat('0', ($integerMagnitude - $i));
+
+            switch ($this->getNumberMagnitude((int)$num)) {
+                case 0:
+                    $dict = self::$unitToWord;
+                    break;
+                case 1:
+                    $dict = self::$tensToWord;
+                    break;
+            }
+            $parts[] = $dict[$num];
+        }
+
+        $number = implode(' ', $parts);
+
+        $currencyBasis = $this->getDeclinedCurrency((int)$integerPart);
+
+        return $this->createCompleteWord($number, self::$currency[$currencyBasis]);
+    }
+
+    /**
+     * @param $amountInWord
+     * @param $currency
+     * @return string
+     */
+    private function createCompleteWord($amountInWord, $currency)
+    {
+        return ucfirst($amountInWord.' '.$currency);
     }
 
     /**
@@ -75,5 +125,14 @@ class AmountToWords
         }
 
         return $currencyBasis;
+    }
+
+    /**
+     * @param $integerPart
+     * @return int
+     */
+    private function getNumberMagnitude($integerPart): int
+    {
+        return strlen((string)$integerPart) - 1;
     }
 }
