@@ -93,6 +93,61 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     * @dataProvider getSeveralThousands
+     * @param $number
+     * @param $expectedResult
+     */
+    public function returnProperAmountForSeveralThousands($number, $expectedResult)
+    {
+        $this->assertSame($expectedResult, $this->converter->convert($number));
+    }
+
+    /**
+     * @test
+     * @dataProvider getAmounts
+     * @param $number
+     * @param $expectedResult
+     */
+    public function returnProperAmount($number, $expectedResult)
+    {
+        $this->assertSame($expectedResult, $this->converter->convert($number));
+    }
+
+    /**
+     * @return array
+     */
+    public function getAmounts()
+    {
+        return [
+            [101, 'Sto jeden złotych'],
+            [1234, 'Jeden tysiąc dwieście trzydzieści cztery złote'],
+            [1000000, 'Jeden milion złotych'],
+            [1001000, 'Jeden milion jeden tysiąc złotych'],
+            [1001001, 'Jeden milion jeden tysiąc jeden złoty'],
+            [1001002, 'Jeden milion jeden tysiąc dwa złote'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getSeveralThousands()
+    {
+        return [
+            [1000, 'Jeden tysiąc złotych'],
+            [2000, 'Dwa tysiące złotych'],
+            [3000, 'Trzy tysiące złotych'],
+            [4000, 'Cztery tysiące złotych'],
+            [5000, 'Pięć tysięcy złotych'],
+            [6000, 'Sześć tysięcy złotych'],
+            [7000, 'Siedem tysięcy złotych'],
+            [8000, 'Osiem tysięcy złotych'],
+            [9000, 'Dziewięć tysięcy złotych'],
+        ];
+    }
+
+    /**
      * @return array
      */
     public function getHundredsWithTensAndUnits()
@@ -134,14 +189,14 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
     public function getTensWithUnits()
     {
         return [
-          [21, 'Dwadzieścia jeden złotych'],
-          [38, 'Trzydzieści osiem złotych'],
-          [45, 'Czterdzieści pięć złotych'],
-          [53, 'Pięćdziesiąt trzy złotych'],
-          [64, 'Sześćdziesiąt cztery złotych'],
-          [72, 'Siedemdziesiąt dwa złotych'],
-          [89, 'Osiemdziesiąt dziewięć złotych'],
-          [96, 'Dziewięćdziesiąt sześć złotych'],
+            [21, 'Dwadzieścia jeden złotych'],
+            [38, 'Trzydzieści osiem złotych'],
+            [45, 'Czterdzieści pięć złotych'],
+            [53, 'Pięćdziesiąt trzy złote'],
+            [64, 'Sześćdziesiąt cztery złote'],
+            [72, 'Siedemdziesiąt dwa złote'],
+            [89, 'Osiemdziesiąt dziewięć złotych'],
+            [96, 'Dziewięćdziesiąt sześć złotych'],
         ];
     }
 

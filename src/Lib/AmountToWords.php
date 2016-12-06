@@ -6,16 +6,20 @@ namespace Lib;
 
 class AmountToWords
 {
+    const SINGULAR = 'singular';
+    const PLURAL = 'plural';
+    const MULTIPLE = 'multiple';
+    const THOUSANDS_SEPARATOR = '-';
+
     /** @var array */
     private static $currency = [
-        'singular' => 'złoty',
-        'plural' => 'złote',
-        'multiple' => 'złotych',
+        self::SINGULAR => 'złoty',
+        self::PLURAL => 'złote',
+        self::MULTIPLE => 'złotych',
     ];
 
     /** @var array */
-    private static $unitToWord = [
-        0 => 'zero',
+    private static $numberToWord = [
         1 => 'jeden',
         2 => 'dwa',
         3 => 'trzy',
@@ -25,9 +29,6 @@ class AmountToWords
         7 => 'siedem',
         8 => 'osiem',
         9 => 'dziewięć',
-    ];
-
-    private static $tensToWord = [
         10 => 'dziesięć',
         11 => 'jedenaście',
         12 => 'dwanaście',
@@ -46,9 +47,6 @@ class AmountToWords
         70 => 'siedemdziesiąt',
         80 => 'osiemdziesiąt',
         90 => 'dziewięćdziesiąt',
-    ];
-
-    private static $hundredsToWord = [
         100 => 'sto',
         200 => 'dwieście',
         300 => 'trzysta',
@@ -60,6 +58,48 @@ class AmountToWords
         900 => 'dziewięćset',
     ];
 
+    private static $numberMagnitude = [
+        0 => 'Tens',
+        1 => 'Hundreds',
+        2 => 'Thousand',
+        3 => 'Milion',
+        4 => 'Miliard',
+        5 => 'Bilion',
+        6 => 'Biliard',
+    ];
+
+    private static $magnitudesDeclinations = [
+        'Hundreds' => [
+            self::SINGULAR => '',
+            self::PLURAL => '',
+            self::MULTIPLE => '',
+        ],
+        'Thousand' => [
+            self::SINGULAR => 'tysiąc',
+            self::PLURAL => 'tysiące',
+            self::MULTIPLE => 'tysięcy',
+        ],
+        'Milion' => [
+            self::SINGULAR => 'milion',
+            self::PLURAL => 'miliony',
+            self::MULTIPLE => 'milionów',
+        ],
+        'Miliard' => [
+            self::SINGULAR => 'miliard',
+            self::PLURAL => 'miliardy',
+            self::MULTIPLE => 'miliardów',
+        ],
+        'Bilion' => [
+            self::SINGULAR => 'bilion',
+            self::PLURAL => 'biliony',
+            self::MULTIPLE => 'bilionów',
+        ],
+        'Biliard' => [
+            self::SINGULAR => 'biliard',
+            self::PLURAL => 'biliardy',
+            self::MULTIPLE => 'biliardów',
+        ],
+    ];
 
     /**
      * @param float $amount
@@ -68,56 +108,50 @@ class AmountToWords
      */
     public function convert(float $amount): string
     {
+        if (empty($amount)) {
+            return 'Zero złotych';
+        }
+
         $amountAsStrings = explode('.', number_format($amount, 2, '.', ''));
 
         $decimals = $amountAsStrings[1];
         $numberToConvert = $amountAsStrings[0];
-        $integerMagnitude = $this->getNumberMagnitude($numberToConvert);
 
+        $currency = self::$currency[$this->getCurrencyDeclinationCase((int)$numberToConvert)];
+
+        return $this->createCompleteWord(
+            implode(' ', $this->getAmountAsWords($numberToConvert)),
+            $currency
+        );
+    }
+
+    /**
+     * @param $numberToConvert
+     * @return array
+     */
+    private function getAmountAsWords($numberToConvert): array
+    {
+        $numberAsString = number_format((float)$numberToConvert, 0, '.', self::THOUSANDS_SEPARATOR);
+        $numberParts = explode(self::THOUSANDS_SEPARATOR, $numberAsString);
         $parts = [];
-        $leftToConvert = $numberToConvert;
-        for ($i = 0; $i < ($integerMagnitude + 1); $i++) {
 
-            if ($this->isTeenNumber($leftToConvert)) {
-                $parts[] = self::$tensToWord[$leftToConvert];
-                $num = $leftToConvert;
-                break;
+        $magnitude = self::$numberMagnitude[count($numberParts)];
+
+        foreach ($numberParts as $key => $number) {
+            $convertedNumber = $this->convertNumber($number);
+
+            if (!empty($convertedNumber)) {
+                $parts = array_merge($parts, $convertedNumber);
+
+                $parts[] = self::$magnitudesDeclinations[$magnitude][$this->getDeclinationCase((int)$number)];
             }
 
-            if ($this->isRoundTenWithoutUnits($leftToConvert)) {
-                $parts[] = self::$tensToWord[$leftToConvert];
-                $num = $leftToConvert;
-
-                break;
-            }
-
-            $num = $numberToConvert[$i].str_repeat('0', ($integerMagnitude - $i));
-
-            if ((int)$num == 0) {
-                continue;
-            }
-            switch ($this->getNumberMagnitude((int)$num)) {
-                case 0:
-                    $dict = self::$unitToWord;
-                    break;
-                case 1:
-                    $dict = self::$tensToWord;
-                    break;
-                case 2:
-                    $dict = self::$hundredsToWord;
-                    break;
-            }
-
-            $parts[] = $dict[$num];
-            $leftToConvert = $numberToConvert - $num;
+            $magnitude = self::$numberMagnitude[count($numberParts) - ($key + 1)];
         }
 
-        $number = implode(' ', $parts);
-
-        $currencyBasis = $this->getDeclinedCurrency((int)$numberToConvert);
-
-        return $this->createCompleteWord($number, self::$currency[$currencyBasis]);
+        return $parts;
     }
+
 
     /**
      * @param $amountInWord
@@ -126,33 +160,71 @@ class AmountToWords
      */
     private function createCompleteWord($amountInWord, $currency)
     {
-        return ucfirst($amountInWord.' '.$currency);
+        return ucfirst(trim($amountInWord).' '.trim($currency));
+    }
+
+    /**
+     * @param $number
+     * @return bool
+     */
+    private function isPowerOfThousand($number)
+    {
+        $log = log10((float)$number);
+
+        return is_numeric($log) && floor($log) == $log && $log > 2;
     }
 
     /**
      * @param $amount
      * @return string
      */
-    private function getDeclinedCurrency($amount): string
+    private function getCurrencyDeclinationCase(int $amount): string
     {
-        switch (true) {
+        $lastDigit = substr((string)$amount, -1);
+        $lastTwoDigits = substr((string)$amount, -2);
 
-            case $amount > 1 && $amount > 20 && in_array(substr((string)$amount, -1), [2, 3, 4]):
-                $currencyBasis = 'plural';
+        switch (true) {
+            case $this->isPowerOfThousand($amount):
+                $declinationBase = self::MULTIPLE;
                 break;
-            case $amount === 1:
-                $currencyBasis = 'singular';
-                break;
-            case in_array($amount, [2, 3, 4]) :
-                $currencyBasis = 'plural';
+            case
+                $amount > 1000 && $lastDigit < 2 && $lastDigit == 1 && $lastTwoDigits < 10:
+                $declinationBase = self::SINGULAR;
                 break;
             default:
-                $currencyBasis = 'multiple';
-
-                return $currencyBasis;
+                $declinationBase = $this->getDeclinationCase($amount);
         }
 
-        return $currencyBasis;
+        return $declinationBase;
+    }
+
+    /**
+     * @param $amount
+     * @return string
+     */
+    private function getDeclinationCase(int $amount): string
+    {
+        $lastDigit = substr((string)$amount, -1);
+
+        switch (true) {
+            case $this->isPowerOfThousand($amount):
+                $declinationBase = self::SINGULAR;
+                break;
+            case
+                $amount > 1 && $amount > 20 && in_array($lastDigit, [2, 3, 4]):
+                $declinationBase = self::PLURAL;
+                break;
+            case $amount === 1:
+                $declinationBase = self::SINGULAR;
+                break;
+            case in_array($amount, [2, 3, 4]) :
+                $declinationBase = self::PLURAL;
+                break;
+            default:
+                $declinationBase = self::MULTIPLE;
+        }
+
+        return $declinationBase;
     }
 
     /**
@@ -165,20 +237,32 @@ class AmountToWords
     }
 
     /**
-     * @param $number
-     * @return bool
+     * @param $numberToConvert
+     * @return array
      */
-    private function isTeenNumber($number): bool
+    private function convertNumber($numberToConvert): array
     {
-        return $number > 10 && $number < 20;
-    }
+        $parts = [];
+        $leftToConvert = $numberToConvert;
+        $integerMagnitude = $this->getNumberMagnitude($numberToConvert);
 
-    /**
-     * @param $number
-     * @return bool
-     */
-    private function isRoundTenWithoutUnits($number): bool
-    {
-        return $number % 10 == 0 && $number < 100;
+        for ($i = 0; $i < ($integerMagnitude + 1); $i++) {
+
+            if (isset(self::$numberToWord[(int)$leftToConvert])) {
+                $parts[] = self::$numberToWord[(int)$leftToConvert];
+                break;
+            }
+
+            $num = $numberToConvert[$i].str_repeat('0', ($integerMagnitude - $i));
+
+            if ((int)$num == 0) {
+                continue;
+            }
+
+            $parts[] = self::$numberToWord[$num];
+            $leftToConvert = $numberToConvert - $num;
+        }
+
+        return $parts;
     }
 }
