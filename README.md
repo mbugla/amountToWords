@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/hajs86/amountToWords.svg?branch=master)](https://travis-ci.org/hajs86/amountToWords)
+
 # AmountToWords
 Converts float type PLN amount into words
 
