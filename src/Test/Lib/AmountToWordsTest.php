@@ -124,6 +124,15 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     * @expectedException \OutOfRangeException
+     */
+    public function throwsExceptionForNotSupportedNumber()
+    {
+        $this->converter->convert(1239239023190231902139901239012390219021390213901299021390231);
+    }
+
+    /**
      * @return array
      */
     public function getAmountsWithPens()

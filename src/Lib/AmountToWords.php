@@ -104,9 +104,13 @@ class AmountToWords
         $numberAsString = number_format($numberToConvert, 0, '.', self::THOUSANDS_SEPARATOR);
         $numberParts = explode(self::THOUSANDS_SEPARATOR, $numberAsString);
         $parts = [];
+        $numberPartsCount = count($numberParts);
 
-        $magnitude = self::$numberMagnitude[count($numberParts)];
+        if($numberPartsCount > count(self::$numberMagnitude)) {
+            throw new \OutOfRangeException('Given number is to big and it is not supported.');
+        }
 
+        $magnitude = self::$numberMagnitude[$numberPartsCount];
         foreach ($numberParts as $key => $number) {
             $convertedNumber = $this->convertNumber($number);
 
