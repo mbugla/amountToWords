@@ -132,9 +132,9 @@ class AmountToWords
                 break;
             }
 
-            $num = $numberToConvert[$i].str_repeat('0', ($integerMagnitude - $i));
+            $num = (int)($numberToConvert[$i].str_repeat('0', ($integerMagnitude - $i)));
 
-            if ((int)$num == 0) {
+            if ($num == 0) {
                 continue;
             }
 

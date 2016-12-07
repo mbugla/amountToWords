@@ -65,7 +65,7 @@ class Declinations
             case $amount == 0:
                 $declinationBase = Declinations::MULTIPLE;
                 break;
-            case self::isPowerOfThousand((float)$amount):
+            case self::isPowerOfThenGreaterThanThousand((float)$amount):
                 $declinationBase = Declinations::MULTIPLE;
                 break;
             case
@@ -84,7 +84,7 @@ class Declinations
      * @param $number
      * @return bool
      */
-    private static function isPowerOfThousand(float $number): bool
+    private static function isPowerOfThenGreaterThanThousand(float $number): bool
     {
         $log = log10($number);
 
@@ -100,9 +100,6 @@ class Declinations
         $lastDigit = substr((string)$amount, -1);
 
         switch (true) {
-            case self::isPowerOfThousand((float)$amount):
-                $declinationBase = Declinations::SINGULAR;
-                break;
             case
                 $amount > 1 && $amount > 20 && in_array($lastDigit, [2, 3, 4]):
                 $declinationBase = Declinations::PLURAL;
@@ -120,16 +117,29 @@ class Declinations
         return $declinationBase;
     }
 
+    /**
+     * @param int $number
+     * @return string
+     */
     public static function getCurrency(int $number): string
     {
         return self::$currency[self::getCurrencyDeclinationCase($number)];
     }
 
+    /**
+     * @param int $number
+     * @return string
+     */
     public static function getPens(int $number): string
     {
         return self::$pens[self::getCurrencyDeclinationCase($number)];
     }
 
+    /**
+     * @param string $magnitude
+     * @param int $amount
+     * @return string
+     */
     public static function getMagnitudeDeclination(string $magnitude, int $amount): string
     {
         if(!isset(self::$magnitudesDeclinations[$magnitude])) {
