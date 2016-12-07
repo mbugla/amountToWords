@@ -56,6 +56,14 @@ class AmountToWords
         4 => 'Miliard',
         5 => 'Bilion',
         6 => 'Biliard',
+        7 => 'Trylion',
+        8 => 'Tryliard',
+        9 => 'Kwadrylion',
+        10 => 'Kwadryliard',
+        11 => 'Kwintylion',
+        12 => 'Kwintyliard',
+        13 => 'Sekstylion',
+        14 => 'Sekstyliard',
     ];
 
     /**
@@ -124,15 +132,15 @@ class AmountToWords
     {
         $parts = [];
         $leftToConvert = $numberToConvert;
-        $integerMagnitude = $this->getNumberMagnitude($numberToConvert);
+        $magnitude = $this->getNumberMagnitude($numberToConvert);
 
-        for ($i = 0; $i < ($integerMagnitude + 1); $i++) {
+        for ($i = 0; $i < ($magnitude + 1); $i++) {
             if (isset(self::$numberToWord[(int)$leftToConvert])) {
                 $parts[] = self::$numberToWord[(int)$leftToConvert];
                 break;
             }
 
-            $num = (int)($numberToConvert[$i].str_repeat('0', ($integerMagnitude - $i)));
+            $num = (int)($numberToConvert[$i].str_repeat('0', ($magnitude - $i)));
 
             if ($num == 0) {
                 continue;

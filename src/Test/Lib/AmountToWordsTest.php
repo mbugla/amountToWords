@@ -132,7 +132,15 @@ class AmountToWordsTest extends \PHPUnit_Framework_TestCase
             [12.34, 'Dwanaście złotych trzydzieści cztery grosze'],
             [456.22, 'Czterysta pięćdziesiąt sześć złotych dwadzieścia dwa grosze'],
             [1000000.01, 'Jeden milion złotych jeden grosz'],
-            [100001.01, 'Sto tysięcy jeden złoty jeden grosz']
+            [100001.01, 'Sto tysięcy jeden złoty jeden grosz'],
+            [
+                923190231903190123390,
+                'Dziewięćset dwadzieścia trzy tryliony sto dziewięćdziesiąt biliardów dwieście trzydzieści jeden bilionów dziewięćset trzy miliardy sto dziewięćdziesiąt milionów sto dwadzieścia dwa tysiące czterysta dziewięćdziesiąt sześć złotych zero groszy',
+            ],
+            [
+                943904590549045905490549054900453043043535,
+                'Dziewięćset czterdzieści trzy sekstyliardy dziewięćset cztery sekstyliony pięćset dziewięćdziesiąt kwintyliardów pięćset czterdzieści dziewięć kwintylionów czterdzieści pięć kwadryliardów osiemset pięćdziesiąt pięć kwadrylionów siedemset sześćdziesiąt pięć tryliardów pięćset pięćdziesiąt trylionów dziewięćset biliardów dziewięćset sześćdziesiąt pięć bilionów dziewięćdziesiąt sześć miliardów sześćset trzydzieści sześć milionów dwieście osiemdziesiąt cztery tysiące dziewięćset dwadzieścia osiem złotych zero groszy'
+            ]
         ];
     }
 

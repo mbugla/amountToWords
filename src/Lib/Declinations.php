@@ -11,18 +11,10 @@ class Declinations
     const MULTIPLE = 'multiple';
 
     /** @var array */
-    public static $currency = [
-        self::SINGULAR => 'złoty',
-        self::PLURAL => 'złote',
-        self::MULTIPLE => 'złotych',
-    ];
+    public static $currency = [self::SINGULAR => 'złoty', self::PLURAL => 'złote', self::MULTIPLE => 'złotych',];
 
     /** @var array */
-    public static $pens = [
-        self::SINGULAR => 'grosz',
-        self::PLURAL => 'grosze',
-        self::MULTIPLE => 'groszy',
-    ];
+    public static $pens = [self::SINGULAR => 'grosz', self::PLURAL => 'grosze', self::MULTIPLE => 'groszy',];
 
     public static $magnitudesDeclinations = [
         'Thousand' => [
@@ -49,6 +41,46 @@ class Declinations
             self::SINGULAR => 'biliard',
             self::PLURAL => 'biliardy',
             self::MULTIPLE => 'biliardów',
+        ],
+        'Trylion' => [
+            self::SINGULAR => 'trylion',
+            self::PLURAL => 'tryliony',
+            self::MULTIPLE => 'trylionów',
+        ],
+        'Tryliard' => [
+            self::SINGULAR => 'tryliard',
+            self::PLURAL => 'tryliardy',
+            self::MULTIPLE => 'tryliardów',
+        ],
+        'Kwadrylion' => [
+            self::SINGULAR => 'kwadrylion',
+            self::PLURAL => 'kwadryliony',
+            self::MULTIPLE => 'kwadrylionów',
+        ],
+        'Kwadryliard' => [
+            self::SINGULAR => 'kwadryliard',
+            self::PLURAL => 'kwadryliardy',
+            self::MULTIPLE => 'kwadryliardów',
+        ],
+        'Kwintylion' => [
+            self::SINGULAR => 'kwintylion',
+            self::PLURAL => 'kwintyliony',
+            self::MULTIPLE => 'kwintylionów',
+        ],
+        'Kwintyliard' => [
+            self::SINGULAR => 'kwintyliard',
+            self::PLURAL => 'kwintyliardy',
+            self::MULTIPLE => 'kwintyliardów',
+        ],
+        'Sekstylion' => [
+            self::SINGULAR => 'sekstylion',
+            self::PLURAL => 'sekstyliony',
+            self::MULTIPLE => 'sekstylionów',
+        ],
+        'Sekstyliard' => [
+            self::SINGULAR => 'sekstyliard',
+            self::PLURAL => 'sekstyliardy',
+            self::MULTIPLE => 'sekstyliardów',
         ],
     ];
 
@@ -142,7 +174,7 @@ class Declinations
      */
     public static function getMagnitudeDeclination(string $magnitude, int $amount): string
     {
-        if(!isset(self::$magnitudesDeclinations[$magnitude])) {
+        if (!isset(self::$magnitudesDeclinations[$magnitude])) {
             return '';
         }
 
