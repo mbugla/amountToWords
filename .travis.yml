@@ -1,0 +1,11 @@
+language: php
+
+php:
+  - 7.0
+  - nightly
+
+before_script:
+  - composer --dev install
+
+script:
+  - phpunit -c phpunit.xml --coverage-text
