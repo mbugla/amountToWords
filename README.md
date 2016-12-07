@@ -1,6 +1,8 @@
 # amountToWords
 Converts float type PLN amount into words
 
+Konwertuje kwotę w formacie liczbowym na kwotę słownie w polskich złotych
+
 #Usage
 
 
